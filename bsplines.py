@@ -123,8 +123,8 @@ class BsplineEvaluation:
         '''
         dimension = get_dimension(self._control_points)
         if dimension == 1:
-            derivative_vector = np.array([1 , self.get_derivative_at_time_t(time,1)[0]])
-            derivative_2nd_vector = np.array([0 , self.get_derivative_at_time_t(time,2)[0]])
+            derivative_vector = np.array([1 , self.get_derivative_at_time_t(time,1)[0,0]])
+            derivative_2nd_vector = np.array([0 , self.get_derivative_at_time_t(time,2)[0,0]])
         else:
             derivative_vector = self.get_derivative_at_time_t(time,1)
             derivative_2nd_vector = self.get_derivative_at_time_t(time,2)

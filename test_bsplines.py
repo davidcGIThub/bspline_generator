@@ -46,6 +46,6 @@ bspline.plot_spline(number_data_points)
 bspline.plot_spline_vs_time(number_data_points)
 bspline.plot_basis_functions(number_data_points)
 bspline.plot_derivative(number_data_points, derivative_order)
-# bspline.plot_curvature(number_data_points)
+bspline.plot_curvature(number_data_points)
 
 
