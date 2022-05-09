@@ -1,6 +1,6 @@
 from csv import get_dialect
 import numpy as np
-from helper_functions import count_number_of_control_points, find_preceding_knot_index, find_end_time, \
+from bsplinegenerator.helper_functions import count_number_of_control_points, find_preceding_knot_index, find_end_time, \
         get_dimension
 
 def table_bspline_evaluation(time, control_points, knot_points, clamped = False):

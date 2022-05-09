@@ -1,5 +1,20 @@
-# bspline_generator
+# Bspline_Generator
 B-Spline Generator class
 
-# TODO
-Add the matrix evaluations for clamped b splines or order 4-5
+# Dependencies
+Install the following
+
+pip3 install numpy
+pip3 install matplotlib
+
+# Installation 
+navigate to the working folder
+
+/bspline_generator
+
+then run the following command
+
+pip install .
+
+# Tutorial
+Run the test_bsplines.py file to see how to use the class

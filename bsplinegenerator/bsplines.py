@@ -1,21 +1,21 @@
 """
-This module contains code to evaluate an open uniform b spline 
+This module contains code to evaluate an uniform b splines 
 using the matrix method and the cox-de-boor table method for splines of order 
 higher than the 5th degree. This also evaluates the derivatives of the B-spline
 """
 
 import numpy as np 
 import matplotlib.pyplot as plt
-from matrix_evaluation import matrix_bspline_evaluation, derivative_matrix_bspline_evaluation
-from table_evaluation import table_bspline_evaluation, derivative_table_bspline_evaluation, \
+from bsplinegenerator.matrix_evaluation import matrix_bspline_evaluation, derivative_matrix_bspline_evaluation
+from bsplinegenerator.table_evaluation import table_bspline_evaluation, derivative_table_bspline_evaluation, \
     cox_de_boor_table_basis_function
-from helper_functions import count_number_of_control_points, get_dimension, find_preceding_knot_index
+from bsplinegenerator.helper_functions import count_number_of_control_points, get_dimension, find_preceding_knot_index
 class BsplineEvaluation:
     """
-    This class contains contains code to evaluate an open uniform b spline 
+    This class contains contains code to evaluate uniform b spline 
     using the matrix method and the cox-de-boor table method for splines of order
-    higher than the 5th degree. This also uses the table method for clamped B-splines
-    of order higher than 3. This also evaluates the derivatives of the B-spline.
+    higher than the 5th degree. This also uses the table method for B-splines
+    of order higher than 5. This also evaluates the derivatives of the B-spline.
     """
 
     def __init__(self, control_points, order, start_time, scale_factor=1, clamped=False):
@@ -101,7 +101,7 @@ class BsplineEvaluation:
         """
         This function evaluates the B spline at the given time
         """
-        if self._order > 5 or (self._clamped and self._order > 3):
+        if self._order > 5:
             spline_at_time_t = table_bspline_evaluation(time, self._control_points, self._knot_points, self._clamped)
         else:
             spline_at_time_t = matrix_bspline_evaluation(time, self._scale_factor, self._control_points, self._knot_points, self._clamped)
@@ -111,7 +111,7 @@ class BsplineEvaluation:
         '''
         This function evaluates the rth derivative of the spline at time t
         '''
-        if self._order > 5 or (self._order > 3 and self._clamped):
+        if self._order > 5:
             derivative_at_time_t = derivative_table_bspline_evaluation(time, derivative_order, self._control_points, self._knot_points, self._clamped)       
         else:
             derivative_at_time_t = derivative_matrix_bspline_evaluation(time, derivative_order, self._scale_factor, self._control_points, self._knot_points, self._clamped)
@@ -123,8 +123,8 @@ class BsplineEvaluation:
         '''
         dimension = get_dimension(self._control_points)
         if dimension == 1:
-            derivative_vector = np.array([1 , self.get_derivative_at_time_t(time,1)[0,0]])
-            derivative_2nd_vector = np.array([0 , self.get_derivative_at_time_t(time,2)[0,0]])
+            derivative_vector = np.array([1 , self.get_derivative_at_time_t(time,1)[0]])
+            derivative_2nd_vector = np.array([0 , self.get_derivative_at_time_t(time,2)[0]])
         else:
             derivative_vector = self.get_derivative_at_time_t(time,1)
             derivative_2nd_vector = self.get_derivative_at_time_t(time,2)

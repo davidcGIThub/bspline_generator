@@ -1,5 +1,5 @@
 import numpy as np
-from helper_functions import count_number_of_control_points, find_preceding_knot_index, find_end_time, get_dimension
+from bsplinegenerator.helper_functions import count_number_of_control_points, find_preceding_knot_index, find_end_time, get_dimension
 
 
 def recursive_bspline_evaluation(time, control_points, knot_points, clamped = False):
