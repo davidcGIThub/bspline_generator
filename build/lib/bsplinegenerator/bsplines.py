@@ -16,8 +16,7 @@ from bsplinegenerator.bspline_plotter import plot_bspline, plot_bspline_vs_time,
     plot_bspline_centripetal_acceleration, plot_bspline_derivative
 from bsplinegenerator.bspline_to_bezier import convert_list_to_bezier_control_points
 from bsplinegenerator.bezier_curve_plotter import plot_bezier_curves_from_spline_data
-from bsplinegenerator.bspline_to_minvo import convert_list_to_minvo_control_points
-from bsplinegenerator.minvo_curve_plotter import plot_minvo_curves_from_spline_data
+from arc_length import get_bspline_arc_length
 
 class BsplineEvaluation:
     """
@@ -121,6 +120,15 @@ class BsplineEvaluation:
         else:
             derivative_magnitude_data = np.abs(derivative_data)
         return derivative_magnitude_data, time_data
+
+    def get_arc_length(self):
+        spline_data, time_data = self.get_spline_data(10000)
+        segment_lengths = np.linalg.norm(spline_data[:,1:] - spline_data[:,0:-1],2,0)
+        length = np.sum(segment_lengths)
+        return length
+
+    def get_arc_length_analytical(self):
+        return get_bspline_arc_length(self._order,self._control_points, self._clamped)
 
     def get_spline_curvature_data(self, num_data_points_per_interval):
         '''
@@ -452,7 +460,7 @@ class BsplineEvaluation:
         return derivative_data, time_data
 
     def get_bezier_control_points(self):
-        if self._order > 7:
+        if self._order > 5:
             print("Package not capable of converting control points for spline of order higher than 5")
             return np.array([])
         elif self._clamped:
@@ -464,20 +472,6 @@ class BsplineEvaluation:
         else:
             bezier_control_points = convert_list_to_bezier_control_points(self._control_points,self._order)
             return bezier_control_points
-        
-    def get_minvo_control_points(self):
-        if self._order > 7:
-            print("Package not capable of converting control points for spline of order higher than 7")
-            return np.array([])
-        elif self._clamped:
-            if self._num_control_points == self._order + 1:
-                return self._control_points
-            else:
-                print("Package not capable of converting clamped control points with more than one interval.")
-                return np.array([])
-        else:
-            minvo_control_points = convert_list_to_minvo_control_points(self._control_points,self._order)
-            return minvo_control_points
 
     def __create_knot_points(self):
         '''
@@ -553,16 +547,6 @@ class BsplineEvaluation:
             bezier_control_points = self.get_bezier_control_points()
             spline_data, time_data = self.get_spline_data(num_data_points_per_interval)
             plot_bezier_curves_from_spline_data(self._order, spline_data, bezier_control_points)
-
-    def plot_minvo_curves(self, num_data_points_per_interval):
-        if self._order > 5:
-            print("Package not capable of converting control points for spline of order higher than 5")
-        elif self._clamped and self._num_control_points != self._order + 1:
-            print("Package not capable of converting clamped control points with more than one interval.")
-        else:
-            minvo_control_points = self.get_minvo_control_points()
-            spline_data, time_data = self.get_spline_data(num_data_points_per_interval)
-            plot_minvo_curves_from_spline_data(self._order, spline_data, minvo_control_points)
 
     def check_if_points_are_ascending_colinear(self, point_a, point_b, point_c):
         vector_1 = point_b-point_a

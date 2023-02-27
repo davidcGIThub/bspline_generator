@@ -201,10 +201,10 @@ def __get_2_order_matrix():
     return M
 
 def __get_3_order_matrix():
-    M = np.array([[-2 ,  6  , -6 , 2],
-                  [ 6 , -12 ,  0 , 8],
-                  [-6 ,  6  ,  6 , 2],
-                  [ 2 ,  0  ,  0 , 0]])/12
+    M = np.array([[-2 ,  6 , -6 , 2],
+                    [ 6 , -12 ,  0 , 8],
+                    [-6 ,  6 ,  6 , 2],
+                    [ 2 ,  0 ,  0 , 0]])/12
     return M
 
 def __get_4_order_matrix():
