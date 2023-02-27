@@ -153,7 +153,7 @@ def get_M_matrix(initial_control_point_index, order, knot_points, clamped):
         if order > 5:
             print("Error: Cannot compute higher than 5th order matrix evaluation for clamped spline")
             return None
-        if order == 2:
+        elif order == 2:
             M = __get_clamped_2_order_matrix(initial_control_point_index, order, knot_points)
         elif order == 3:
             M = __get_clamped_3_order_matrix(initial_control_point_index, order, knot_points)
@@ -165,7 +165,7 @@ def get_M_matrix(initial_control_point_index, order, knot_points, clamped):
         if order > 7:
             print("Error: Cannot compute higher than 7th order matrix evaluation for open spline")
             return None
-        if order == 2:
+        elif order == 2:
             M = __get_2_order_matrix()
         elif order == 3:
             M = __get_3_order_matrix()
@@ -175,6 +175,8 @@ def get_M_matrix(initial_control_point_index, order, knot_points, clamped):
             M = __get_5_order_matrix()
         elif order == 6:
             M = __get_6_order_matrix()
+        elif order == 7:
+            M = __get_7_order_matrix()
     return M
 
 def get_T_derivative_vector(order,t,tj,rth_derivative,scale_factor):
@@ -237,6 +239,17 @@ def __get_6_order_matrix():
                     [15, -30, -45, 20, 135, 150, 57],
                     [-6, 6, 15, 20, 15, 6, 1],
                     [1, 0, 0 , 0, 0, 0, 0]])/720
+    return M
+    
+def __get_7_order_matrix():
+    M = np.array(  [[-1, 7, -21, 35, -35, 21, -7, 1],
+                    [7, -42, 84, 0, -280, 504, -392, 120],
+                    [-21, 105, -105, -315, 665, 315, -1715, 1191],
+                    [35, -140, 0, 560, 0, -1680, 0, 2416],
+                    [-35, 105, 105, -315, -665, 315, 1715, 1191],
+                    [21, -42, -84, 0,  280, 504, 392, 120],
+                    [-7, 7, 21, 35, 35, 21, 7 , 1],
+                    [1, 0, 0, 0 , 0, 0, 0, 0]])/5040
     return M
 
 def __get_clamped_2_order_matrix(initial_control_point_index, order, knot_points):

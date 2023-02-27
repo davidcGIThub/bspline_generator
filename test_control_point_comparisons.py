@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 ### Control Points ###
 
-order = 6
+order = 7
 dimension = 2
 num_control_points = order + 1
 
@@ -31,8 +31,6 @@ bspline = BsplineEvaluation(control_points, order, start_time, scale_factor, cla
 spline_data, time_data = bspline.get_spline_data(num_data_points_per_interval)
 bezier_control_points = bspline.get_bezier_control_points()
 minvo_control_points = bspline.get_minvo_control_points()
-print("minvo cps: " , minvo_control_points)
-
 ##### Plot Spline Data
 
 

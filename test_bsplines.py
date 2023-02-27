@@ -23,7 +23,7 @@ def create_random_control_points_greater_than_angles(num_control_points,order,le
         angle = np.pi/6
     elif order == 5:
         angle = np.pi/8
-    control_points = np.zeros((dimension,num_control_points))
+    control_points = np.zeros((dimension, num_control_points))
     for i in range(num_control_points):
         if i == 0:
             control_points[:,i][:,None] = np.array([[0],[0]])
@@ -41,10 +41,10 @@ def create_random_control_points_greater_than_angles(num_control_points,order,le
             control_points[:,i][:,None] = control_points[:,i-1][:,None] + next_vec
     return control_points
 
-order = 6
-num_control_points = 8
-# dimension = random.randint(1, 3)
-dimension = 2
+order = 7
+num_control_points = 10
+dimension = random.randint(1, 3)
+
 
 control_points = np.random.randint(10, size=(dimension,num_control_points)) # random
 # control_points  = create_random_control_points_greater_than_angles(num_control_points,order,1,dimension)
@@ -58,7 +58,7 @@ scale_factor = 1
 # derivative_order = random.randint(1, order)
 derivative_order = 1
 clamped = False
-num_data_points_per_interval = 1000
+num_data_points_per_interval = 100
 
 ### Create B-Spline Object ###
 bspline = BsplineEvaluation(control_points, order, start_time, scale_factor, clamped)
@@ -90,7 +90,6 @@ print("max_curvature: " , np.max(spline_curvature_data))
 print("max_angular_rate: " , np.max(angular_rate_data))
 print("max_centripetal_acceleration: " , np.max(centripetal_acceleration_data))
 print("number_of_basis_functions: " , len(basis_function_data))
-
 
 
 ##### Plot Spline Data

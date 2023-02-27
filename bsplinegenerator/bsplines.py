@@ -87,7 +87,7 @@ class BsplineEvaluation:
         '''
         number_of_data_points = num_data_points_per_interval*(self._num_control_points-self._order) + 1
         time_data = np.linspace(self._start_time, self._end_time, number_of_data_points)
-        if self._order > 5 or (self._clamped and self._order > 7):
+        if self._order > 7 or (self._clamped and self._order > 5):
             spline_derivative_data = self.__get_spline_derivative_data_point_by_point_method(rth_derivative,time_data)
         else:
             spline_derivative_data = matrix_bspline_derivative_evaluation_for_dataset(rth_derivative, self._scale_factor, self._control_points, self._knot_points, num_data_points_per_interval, self._clamped)
