@@ -41,9 +41,10 @@ def create_random_control_points_greater_than_angles(num_control_points,order,le
             control_points[:,i][:,None] = control_points[:,i-1][:,None] + next_vec
     return control_points
 
-order = 5
-num_control_points = 11
-dimension = random.randint(1, 3)
+order = 6
+num_control_points = 8
+# dimension = random.randint(1, 3)
+dimension = 2
 
 control_points = np.random.randint(10, size=(dimension,num_control_points)) # random
 # control_points  = create_random_control_points_greater_than_angles(num_control_points,order,1,dimension)

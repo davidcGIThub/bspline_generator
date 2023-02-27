@@ -59,7 +59,7 @@ class BsplineEvaluation:
         '''
         number_of_data_points = num_data_points_per_interval*(self._num_control_points-self._order) + 1
         time_data = np.linspace(self._start_time, self._end_time, number_of_data_points)
-        if self._order > 5:
+        if self._order > 7 or (self._clamped and self._order > 5):
             spline_data = self.__get_spline_data_point_by_point_method(time_data)
         else:
             spline_data = matrix_bspline_evaluation_for_dataset(self._control_points, self._knot_points, num_data_points_per_interval, self._clamped)
@@ -87,7 +87,7 @@ class BsplineEvaluation:
         '''
         number_of_data_points = num_data_points_per_interval*(self._num_control_points-self._order) + 1
         time_data = np.linspace(self._start_time, self._end_time, number_of_data_points)
-        if self._order > 5:
+        if self._order > 5 or (self._clamped and self._order > 7):
             spline_derivative_data = self.__get_spline_derivative_data_point_by_point_method(rth_derivative,time_data)
         else:
             spline_derivative_data = matrix_bspline_derivative_evaluation_for_dataset(rth_derivative, self._scale_factor, self._control_points, self._knot_points, num_data_points_per_interval, self._clamped)
@@ -111,8 +111,7 @@ class BsplineEvaluation:
 
     def get_derivative_magnitude_data(self, num_data_points_per_interval, derivative_order):
         '''
-        Returns equally distributed data points for the magnitude of the rth 
-        derivative
+        Returns equally distributed data points for the magnitude of the rth derivative
         '''
         derivative_data, time_data = self.get_spline_derivative_data(num_data_points_per_interval, derivative_order)
         dimension = get_dimension(self._control_points)
@@ -229,7 +228,7 @@ class BsplineEvaluation:
         """
         This function evaluates the B spline at the given time
         """
-        if self._order > 5:
+        if (self._clamped and self._order > 5) or self._order > 7:
             spline_at_time_t = table_bspline_evaluation(time, self._control_points, self._knot_points, self._clamped)
         else:
             spline_at_time_t = matrix_bspline_evaluation(time, self._scale_factor, self._control_points, self._knot_points, self._clamped)
@@ -239,7 +238,7 @@ class BsplineEvaluation:
         '''
         This function evaluates the rth derivative of the spline at time t
         '''
-        if self._order > 5:
+        if (self._clamped and self._order > 5) or self._order > 7:
             derivative_at_time_t = derivative_table_bspline_evaluation(time, derivative_order, self._control_points, self._knot_points, self._clamped)       
         else:
             derivative_at_time_t = derivative_matrix_bspline_evaluation(time, derivative_order, self._scale_factor, self._control_points, self._knot_points, self._clamped)
@@ -545,8 +544,8 @@ class BsplineEvaluation:
         plot_bspline_centripetal_acceleration(centripetal_acceleration_data, time_data)
 
     def plot_bezier_curves(self, num_data_points_per_interval):
-        if self._order > 5:
-            print("Package not capable of converting control points for spline of order higher than 5")
+        if self._order > 7:
+            print("Package not capable of converting control points for spline of order higher than 7")
         elif self._clamped and self._num_control_points != self._order + 1:
             print("Package not capable of converting clamped control points with more than one interval.")
         else:
@@ -555,10 +554,10 @@ class BsplineEvaluation:
             plot_bezier_curves_from_spline_data(self._order, spline_data, bezier_control_points)
 
     def plot_minvo_curves(self, num_data_points_per_interval):
-        if self._order > 5:
-            print("Package not capable of converting control points for spline of order higher than 5")
-        elif self._clamped and self._num_control_points != self._order + 1:
+        if self._clamped and self._num_control_points != self._order + 1:
             print("Package not capable of converting clamped control points with more than one interval.")
+        if self._order > 7:
+            print("Package not capable of converting control points for spline of order higher than 7")
         else:
             minvo_control_points = self.get_minvo_control_points()
             spline_data, time_data = self.get_spline_data(num_data_points_per_interval)

@@ -145,14 +145,14 @@ def __create_k_matrix(order,derivative_order,scale_factor):
     return K
 
 def get_M_matrix(initial_control_point_index, order, knot_points, clamped):
-    if order > 5:
-        print("Error: Cannot compute higher than 5th order matrix evaluation")
-        return None
     if order == 0:
         return 1
     if order == 1:
         M = __get_1_order_matrix()
     elif clamped:
+        if order > 5:
+            print("Error: Cannot compute higher than 5th order matrix evaluation for clamped spline")
+            return None
         if order == 2:
             M = __get_clamped_2_order_matrix(initial_control_point_index, order, knot_points)
         elif order == 3:
@@ -162,6 +162,9 @@ def get_M_matrix(initial_control_point_index, order, knot_points, clamped):
         elif order == 5:
             M = __get_clamped_5_order_matrix(initial_control_point_index, order, knot_points)
     else:
+        if order > 7:
+            print("Error: Cannot compute higher than 7th order matrix evaluation for open spline")
+            return None
         if order == 2:
             M = __get_2_order_matrix()
         elif order == 3:
@@ -170,6 +173,8 @@ def get_M_matrix(initial_control_point_index, order, knot_points, clamped):
             M = __get_4_order_matrix()
         elif order == 5:
             M = __get_5_order_matrix()
+        elif order == 6:
+            M = __get_6_order_matrix()
     return M
 
 def get_T_derivative_vector(order,t,tj,rth_derivative,scale_factor):
@@ -222,6 +227,16 @@ def __get_5_order_matrix():
                     [ 10 , -20 , -20 ,  20 ,  50 , 26],
                     [-5  ,  5  ,  10 ,  10 ,  5  , 1 ],
                     [ 1  ,  0  ,  0  ,  0  ,  0  , 0]])/120
+    return M
+
+def __get_6_order_matrix():
+    M = np.array([[1, -6 , 15 , -20 , 15 , -6 , 1],
+                    [-6, 30, -45, -20, 135, -150, 57],
+                    [15, -60, 30, 160, -150, -240, 302],
+                    [-20, 60, 30, -160, -150, 240, 302],
+                    [15, -30, -45, 20, 135, 150, 57],
+                    [-6, 6, 15, 20, 15, 6, 1],
+                    [1, 0, 0 , 0, 0, 0, 0]])/720
     return M
 
 def __get_clamped_2_order_matrix(initial_control_point_index, order, knot_points):

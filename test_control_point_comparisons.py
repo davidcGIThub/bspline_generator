@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 ### Control Points ###
 
-order = 7
+order = 6
 dimension = 2
 num_control_points = order + 1
 
