@@ -477,6 +477,13 @@ class BsplineEvaluation:
         else:
             minvo_control_points = convert_list_to_minvo_control_points(self._control_points,self._order)
             return minvo_control_points
+        
+    def get_arc_length(self, resolution):
+        spline_data, time_data = self.get_spline_data(resolution)
+        if (get_dimension(self._control_points) == 1):
+            return np.sum(np.abs(spline_data[1:] - spline_data[0:-1]))
+        else:
+            return np.sum(np.linalg.norm(spline_data[:,1:] - spline_data[:,0:-1],2,0))
 
     def __create_knot_points(self):
         '''

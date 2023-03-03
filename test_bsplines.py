@@ -41,7 +41,7 @@ def create_random_control_points_greater_than_angles(num_control_points,order,le
             control_points[:,i][:,None] = control_points[:,i-1][:,None] + next_vec
     return control_points
 
-order = 7
+order = 5
 num_control_points = 10
 dimension = random.randint(1, 3)
 
@@ -93,15 +93,15 @@ print("number_of_basis_functions: " , len(basis_function_data))
 
 
 ##### Plot Spline Data
-bspline.plot_spline(num_data_points_per_interval)
-bspline.plot_spline_vs_time(num_data_points_per_interval)
-bspline.plot_basis_functions(num_data_points_per_interval)
-bspline.plot_derivative(num_data_points_per_interval, derivative_order)
-bspline.plot_derivative_vs_time(num_data_points_per_interval, derivative_order)
-bspline.plot_derivative_magnitude(num_data_points_per_interval, derivative_order)
-bspline.plot_curvature(num_data_points_per_interval)
-bspline.plot_angular_rate(num_data_points_per_interval)
-bspline.plot_centripetal_acceleration(num_data_points_per_interval)
+# bspline.plot_spline(num_data_points_per_interval)
+# bspline.plot_spline_vs_time(num_data_points_per_interval)
+# bspline.plot_basis_functions(num_data_points_per_interval)
+# bspline.plot_derivative(num_data_points_per_interval, derivative_order)
+# bspline.plot_derivative_vs_time(num_data_points_per_interval, derivative_order)
+# bspline.plot_derivative_magnitude(num_data_points_per_interval, derivative_order)
+# bspline.plot_curvature(num_data_points_per_interval)
+# bspline.plot_angular_rate(num_data_points_per_interval)
+# bspline.plot_centripetal_acceleration(num_data_points_per_interval)
 bspline.plot_bezier_curves(num_data_points_per_interval)
 bspline.plot_minvo_curves(num_data_points_per_interval)
 
