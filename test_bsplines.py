@@ -2,7 +2,7 @@ from time import time
 import numpy as np
 import random
 from bsplinegenerator.bsplines import BsplineEvaluation
-import matplotlib.pyplot as plt
+from bsplinegenerator.helper_functions import create_random_control_points_greater_than_angles
 
 ### Control Points ###
 # control_points = np.array([-3,-4,-2,-.5,1,0,2,3.5,3,6,8]) # 1 D
@@ -12,36 +12,8 @@ import matplotlib.pyplot as plt
 #                            [.5, 3.5,  6, 5.5, 3.7,   2, -1,   2, 5],
 #                            [ 1, 3.2,  5,   0, 3.3, 1.5, -1, 2.5, 4]]) # 3D
 
-def create_random_control_points_greater_than_angles(num_control_points,order,length,dimension):
-    if order == 1:
-        angle = np.pi/2
-    elif order == 2:
-        angle = np.pi/2
-    elif order == 3:
-        angle = np.pi/4
-    elif order == 4:
-        angle = np.pi/6
-    elif order == 5:
-        angle = np.pi/8
-    control_points = np.zeros((dimension, num_control_points))
-    for i in range(num_control_points):
-        if i == 0:
-            control_points[:,i][:,None] = np.array([[0],[0]])
-        elif i == 1:
-            random_vec = np.random.rand(2,1)
-            next_vec = length*random_vec/np.linalg.norm(random_vec)
-            control_points[:,i][:,None] = control_points[:,i-1][:,None] + next_vec
-        else:
-            new_angle = 2*np.pi*(0.5-np.random.rand())
-            # new_angle = angle#*2*(0.5-np.random.rand())
-            R = np.array([[np.cos(new_angle), -np.sin(new_angle)],[np.sin(new_angle), np.cos(new_angle)]])
-            prev_vec = control_points[:,i-1][:,None] - control_points[:,i-2][:,None]
-            unit_prev_vec = prev_vec/np.linalg.norm(prev_vec)
-            next_vec = length*np.dot(R,unit_prev_vec)#*np.random.rand()
-            control_points[:,i][:,None] = control_points[:,i-1][:,None] + next_vec
-    return control_points
 
-order = 5
+order = 3
 num_control_points = 10
 dimension = random.randint(1, 3)
 
@@ -55,8 +27,7 @@ if len(control_points) == 1:
 ### Parameters
 start_time = 0
 scale_factor = 1
-# derivative_order = random.randint(1, order)
-derivative_order = 1
+derivative_order = random.randint(1, order)
 clamped = False
 num_data_points_per_interval = 100
 
@@ -90,18 +61,19 @@ print("max_curvature: " , np.max(spline_curvature_data))
 print("max_angular_rate: " , np.max(angular_rate_data))
 print("max_centripetal_acceleration: " , np.max(centripetal_acceleration_data))
 print("number_of_basis_functions: " , len(basis_function_data))
-
+centripetal_acceleration_data, time_data = bspline.get_centripetal_acceleration_data(num_data_points_per_interval)
+velocity_data, time_data = bspline.get_spline_derivative_data(num_data_points_per_interval,1)
+acceleration_data, time_data = bspline.get_spline_derivative_data(num_data_points_per_interval,2)
 
 ##### Plot Spline Data
-# bspline.plot_spline(num_data_points_per_interval)
-# bspline.plot_spline_vs_time(num_data_points_per_interval)
-# bspline.plot_basis_functions(num_data_points_per_interval)
-# bspline.plot_derivative(num_data_points_per_interval, derivative_order)
-# bspline.plot_derivative_vs_time(num_data_points_per_interval, derivative_order)
-# bspline.plot_derivative_magnitude(num_data_points_per_interval, derivative_order)
-# bspline.plot_curvature(num_data_points_per_interval)
-# bspline.plot_angular_rate(num_data_points_per_interval)
-# bspline.plot_centripetal_acceleration(num_data_points_per_interval)
+bspline.plot_spline(num_data_points_per_interval)
+bspline.plot_spline_vs_time(num_data_points_per_interval)
+bspline.plot_basis_functions(num_data_points_per_interval)
+bspline.plot_derivative(num_data_points_per_interval, derivative_order)
+bspline.plot_derivative_vs_time(num_data_points_per_interval, derivative_order)
+bspline.plot_derivative_magnitude(num_data_points_per_interval, derivative_order)
+bspline.plot_curvature(num_data_points_per_interval)
+bspline.plot_angular_rate(num_data_points_per_interval)
+bspline.plot_centripetal_acceleration(num_data_points_per_interval)
 bspline.plot_bezier_curves(num_data_points_per_interval)
 bspline.plot_minvo_curves(num_data_points_per_interval)
-

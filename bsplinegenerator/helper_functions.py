@@ -49,3 +49,32 @@ def get_time_to_point_correlation(points,start_time,end_time):
     number_of_points = count_number_of_control_points(points)
     time_array = np.linspace(start_time, end_time, number_of_points)
     return time_array
+
+
+def create_random_control_points_greater_than_angles(num_control_points,order,length,dimension):
+    if order == 1:
+        angle = np.pi/2
+    elif order == 2:
+        angle = np.pi/2
+    elif order == 3:
+        angle = np.pi/4
+    elif order == 4:
+        angle = np.pi/6
+    elif order == 5:
+        angle = np.pi/8
+    control_points = np.zeros((dimension, num_control_points))
+    for i in range(num_control_points):
+        if i == 0:
+            control_points[:,i][:,None] = np.array([[0],[0]])
+        elif i == 1:
+            random_vec = np.random.rand(2,1)
+            next_vec = length*random_vec/np.linalg.norm(random_vec)
+            control_points[:,i][:,None] = control_points[:,i-1][:,None] + next_vec
+        else:
+            new_angle = angle#*2*(0.5-np.random.rand())
+            R = np.array([[np.cos(new_angle), -np.sin(new_angle)],[np.sin(new_angle), np.cos(new_angle)]])
+            prev_vec = control_points[:,i-1][:,None] - control_points[:,i-2][:,None]
+            unit_prev_vec = prev_vec/np.linalg.norm(prev_vec)
+            next_vec = length*np.dot(R,unit_prev_vec)#*np.random.rand()
+            control_points[:,i][:,None] = control_points[:,i-1][:,None] + next_vec
+    return control_points

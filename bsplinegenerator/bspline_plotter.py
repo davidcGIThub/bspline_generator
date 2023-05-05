@@ -215,10 +215,9 @@ def plot_bspline_derivative_vs_time(derivative_data, time_data, derivative_order
 
 def plot_bspline_derivative_magnitude(magnitude_data, time_data, control_point_data, control_point_time):
     plt.figure("Derivative Magnitude")
-    plt.plot(time_data, magnitude_data, label = "derivative norm")
-    plt.scatter(np.array([]), np.array([]))
-    plt.plot(control_point_time, control_point_data, label="control point derivative norm")
-    plt.scatter(control_point_time, control_point_data)
+    plt.plot(control_point_time, control_point_data, label="control point derivative norm", color = "tab:orange")
+    plt.scatter(control_point_time, control_point_data, color = "tab:orange")
+    plt.plot(time_data, magnitude_data, label = "derivative norm", color = "tab:blue")
     plt.xlabel('time')
     plt.ylabel('derivative magnitude')
     plt.title("Derivative Magnitude")
