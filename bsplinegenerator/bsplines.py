@@ -51,6 +51,9 @@ class BsplineEvaluation:
 
     def get_end_time(self):
         return self._end_time
+        
+    def get_num_intervals(self):
+    	return self._num_control_points - self._order
 
     def get_spline_data(self , num_data_points_per_interval):
         '''
@@ -137,6 +140,7 @@ class BsplineEvaluation:
         velocity_magnitude[undefined_indices] = 1
         curvature_data = angular_rate_data/velocity_magnitude
         return curvature_data, time_data
+    
 
     def get_angular_rate_data(self,num_data_points_per_interval):
         '''
@@ -209,6 +213,49 @@ class BsplineEvaluation:
             centripetal_acceleration = cross_product_norm/velocity_magnitude
             centripetal_acceleration[undefined_indices] = 0
             return centripetal_acceleration, time_data
+        
+    def get_cross_term_data(self,num_data_points_per_interval):
+        '''
+        Returns equally distributed data points for the centripetal acceleration
+        of the spline, as well as time data for the parameterization
+        '''
+        dimension = get_dimension(self._control_points)
+        if dimension > 3:
+            raise Exception("Centripetal acceleration cannot be evaluated for higher than 3 dimensions")
+        else:
+            velocity_data, time_data = self.get_spline_derivative_data(num_data_points_per_interval,1)
+            acceleration_data, time_data = self.get_spline_derivative_data(num_data_points_per_interval,2)
+            if dimension == 1:
+                velocity_matrix = np.vstack((np.ones(len(time_data)), velocity_data)).T
+                acceleration_matrix = np.vstack((np.zeros(len(time_data)), acceleration_data)).T
+                cross_product_norm = np.abs(np.cross(velocity_matrix, acceleration_matrix).flatten())
+            elif dimension == 2:
+                velocity_matrix = velocity_data.T
+                acceleration_matrix = acceleration_data.T
+                cross_product_norm = np.abs(np.cross(velocity_matrix, acceleration_matrix).flatten())
+            else:
+                velocity_matrix = velocity_data.T
+                acceleration_matrix = acceleration_data.T
+                cross_product_norm = np.linalg.norm(np.cross(velocity_matrix, acceleration_matrix),2,1).flatten()
+            centripetal_acceleration = cross_product_norm
+            return centripetal_acceleration, time_data
+        
+    def get_longitudinal_acceleration_data(self, num_data_points_per_interval):
+        '''
+        Returns equally distributed data points for the longitudinal acceleraiton of the spline, 
+        as well as time data for the parameterization
+        '''
+        dimension = get_dimension(self._control_points)
+        if dimension == 1:
+            longitudinal_acceleration_data, time_data = self.get_spline_derivative_data(num_data_points_per_interval, 2)
+        else:
+            acceleration_data, time_data = self.get_spline_derivative_data(num_data_points_per_interval, 2)
+            velocity_data, time_data = self.get_spline_derivative_data(num_data_points_per_interval, 1)
+            velocity_magnitude = np.linalg.norm(velocity_data,2,0)
+            velocity_magnitude[velocity_magnitude < 1e-8] = 1
+            velocity_hat_data = velocity_data/velocity_magnitude
+            longitudinal_acceleration_data = np.sum(acceleration_data*velocity_hat_data,0)
+        return longitudinal_acceleration_data, time_data
 
     def get_basis_function_data(self, num_data_points_per_interval):
         ''' 
@@ -384,6 +431,25 @@ class BsplineEvaluation:
             return 0
         centripetal_acceleration = np.linalg.norm(np.cross(derivative_vector.flatten(), derivative_2nd_vector.flatten())) / derivative_magnitude
         return centripetal_acceleration
+    
+    def get_longitudinal_acceleration_at_time_t(self, time):
+        '''
+        This function evaluates the longitudinal acceleration at time t
+        '''
+        dimension = get_dimension(self._control_points)
+        
+        if dimension == 1:
+            longitudinal_acceleration = self.get_derivative_at_time_t(time, 2)
+        else:
+            acceleration = self.get_derivative_at_time_t(time,2)
+            velocity = self.get_derivative_at_time_t(time,1)
+            velocity_mag = np.linalg.norm(velocity)
+            if velocity_mag < 1e-8:
+                longitudinal_acceleration = 0
+            else:
+                vel_hat = velocity/velocity_mag
+                longitudinal_acceleration = np.dot(acceleration, vel_hat)
+        return vel_hat
 
     def get_basis_functions_at_time_t(self,time):
         '''
