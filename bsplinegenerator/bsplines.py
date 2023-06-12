@@ -449,7 +449,7 @@ class BsplineEvaluation:
             else:
                 vel_hat = velocity/velocity_mag
                 longitudinal_acceleration = np.dot(acceleration, vel_hat)
-        return vel_hat
+        return longitudinal_acceleration
 
     def get_basis_functions_at_time_t(self,time):
         '''
