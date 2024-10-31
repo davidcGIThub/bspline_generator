@@ -13,17 +13,6 @@ def plot_minvo_curves_from_spline_data(order, curve_data, control_points):
         plot_1d_minvo_curves(order, curve_data, control_points)
     else:
         plot_multidimensional_minvo_curve(order, curve_data, control_points)
-
-def plot_minvbez_curves_from_spline_data(order, curve_data, control_points):
-    dimension = get_dimension(curve_data)
-    if dimension == 3:
-        plot_3d_minvo_curves(order, curve_data, control_points)
-    elif dimension == 2:
-        plot_2d_minvo_curves(order, curve_data, control_points)
-    elif dimension == 1:
-        plot_1d_minvo_curves(order, curve_data, control_points)
-    else:
-        plot_multidimensional_minvo_curve(order, curve_data, control_points)
     
 def plot_3d_minvo_curves(order, curve_data, control_points):
     figure_title = str(order) + " Order Minvo Curves"
@@ -44,7 +33,7 @@ def plot_3d_minvo_curves(order, curve_data, control_points):
 def plot_2d_minvo_curves(order, curve_data, control_points):
     figure_title = str(order) + " Order Minvo Curves"
     plt.figure(figure_title)
-    plt.plot(curve_data[0,:], curve_data[1,:],label="Minvo Curve")
+    plt.plot(curve_data[0,:], curve_data[1,:],label="Piecewise Minvo Curves")
     plt.scatter(np.array([]),np.array([]))
     plt.plot(control_points[0,:], control_points[1,:],color='r')
     plt.scatter(control_points[0,:], control_points[1,:],linewidths=2,label="Minvo Control Points",color='r')

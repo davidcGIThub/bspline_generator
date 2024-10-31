@@ -17,8 +17,7 @@ from bsplinegenerator.bspline_plotter import plot_bspline, plot_bspline_vs_time,
 from bsplinegenerator.bspline_to_bezier import convert_list_to_bezier_control_points
 from bsplinegenerator.bezier_curve_plotter import plot_bezier_curves_from_spline_data
 from bsplinegenerator.bspline_to_minvo import convert_list_to_minvo_control_points
-from bsplinegenerator.bspline_to_minbez import convert_list_to_minvbez_control_points
-from bsplinegenerator.minvo_curve_plotter import plot_minvo_curves_from_spline_data, plot_minvbez_curves_from_spline_data
+from bsplinegenerator.minvo_curve_plotter import plot_minvo_curves_from_spline_data
 
 class BsplineEvaluation:
     """
@@ -124,23 +123,6 @@ class BsplineEvaluation:
         else:
             derivative_magnitude_data = np.abs(derivative_data)
         return derivative_magnitude_data, time_data
-    
-    def get_spline_slope_data(self, num_data_points_per_interval):
-        '''
-        Returns equally distributed data points for the slope of the spline, 
-        as well as time data for the parameterization
-        '''
-        number_of_data_points = num_data_points_per_interval*(self._num_control_points - self._order)
-        time_data = np.linspace(self._start_time, self._end_time, number_of_data_points)
-        if get_dimension(self._control_points) < 3:
-            slope_data = np.zeros(num_data_points_per_interval)
-            return slope_data, time_data
-        else:
-            velocity_data, time_data = self.get_spline_derivative_data(num_data_points_per_interval,1)
-            vertical_velocity = velocity_data[2,:]
-            horizontal_velocity = np.linalg.norm(velocity_data[0:2,:],2,0)
-            slope_data = vertical_velocity/horizontal_velocity
-            return slope_data, time_data
 
     def get_spline_curvature_data(self, num_data_points_per_interval):
         '''
@@ -158,6 +140,7 @@ class BsplineEvaluation:
         velocity_magnitude[undefined_indices] = 1
         curvature_data = angular_rate_data/velocity_magnitude
         return curvature_data, time_data
+    
 
     def get_angular_rate_data(self,num_data_points_per_interval):
         '''
@@ -247,9 +230,9 @@ class BsplineEvaluation:
                 acceleration_matrix = np.vstack((np.zeros(len(time_data)), acceleration_data)).T
                 cross_product_norm = np.abs(np.cross(velocity_matrix, acceleration_matrix).flatten())
             elif dimension == 2:
-                    velocity_matrix = velocity_data.T
-                    acceleration_matrix = acceleration_data.T
-                    cross_product_norm = np.abs(np.cross(velocity_matrix, acceleration_matrix).flatten())
+                velocity_matrix = velocity_data.T
+                acceleration_matrix = acceleration_data.T
+                cross_product_norm = np.abs(np.cross(velocity_matrix, acceleration_matrix).flatten())
             else:
                 velocity_matrix = velocity_data.T
                 acceleration_matrix = acceleration_data.T
@@ -561,20 +544,6 @@ class BsplineEvaluation:
             minvo_control_points = convert_list_to_minvo_control_points(self._control_points,self._order)
             return minvo_control_points
         
-    def get_minvbez_control_points(self):
-        if self._order > 7:
-            print("Package not capable of converting control points for spline of order higher than 7")
-            return np.array([])
-        elif self._clamped:
-            if self._num_control_points == self._order + 1:
-                return self._control_points
-            else:
-                print("Package not capable of converting clamped control points with more than one interval.")
-                return np.array([])
-        else:
-            minvbez_control_points = convert_list_to_minvbez_control_points(self._control_points,self._order)
-            return minvbez_control_points
-        
     def get_arc_length(self, resolution):
         spline_data, time_data = self.get_spline_data(resolution)
         if (get_dimension(self._control_points) == 1):
@@ -666,16 +635,6 @@ class BsplineEvaluation:
             minvo_control_points = self.get_minvo_control_points()
             spline_data, time_data = self.get_spline_data(num_data_points_per_interval)
             plot_minvo_curves_from_spline_data(self._order, spline_data, minvo_control_points)
-    
-    def plot_minvbez_curves(self, num_data_points_per_interval):
-        if self._clamped and self._num_control_points != self._order + 1:
-            print("Package not capable of converting clamped control points with more than one interval.")
-        if self._order > 7:
-            print("Package not capable of converting control points for spline of order higher than 7")
-        else:
-            minvbez_control_points = self.get_minvbez_control_points()
-            spline_data, time_data = self.get_spline_data(num_data_points_per_interval)
-            plot_minvbez_curves_from_spline_data(self._order, spline_data, minvbez_control_points)
 
     def check_if_points_are_ascending_colinear(self, point_a, point_b, point_c):
         vector_1 = point_b-point_a
