@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 from bsplinegenerator.helper_functions import count_number_of_control_points, find_preceding_knot_index,\
     calculate_number_of_control_points, get_dimension
     
@@ -140,7 +141,7 @@ def matrix_bspline_derivative_evaluation_for_dataset(derivative_order, scale_fac
 def __create_k_matrix(order,derivative_order,scale_factor):
     K = np.zeros((order+1,order+1))
     for i in range(order-derivative_order+1):
-        K[i,i] = np.math.factorial(order-i)/np.math.factorial(order-derivative_order-i)
+        K[i,i] = scipy.special.factorial(order-i)/scipy.special.factorial(order-derivative_order-i)
     K = K/scale_factor**(derivative_order)
     return K
 
@@ -183,7 +184,7 @@ def get_T_derivative_vector(order,t,tj,rth_derivative,scale_factor):
     T = np.zeros((order+1,1))
     t_tj = t-tj
     for i in range(order-rth_derivative+1):
-        T[i,0] = (t_tj**(order-rth_derivative-i))/(scale_factor**(order-i)) * np.math.factorial(order-i)/np.math.factorial(order-i-rth_derivative)
+        T[i,0] = (t_tj**(order-rth_derivative-i))/(scale_factor**(order-i)) * scipy.special.factorial(order-i)/scipy.special.factorial(order-i-rth_derivative)
     return T
 
 def get_T_vector(order,t,tj,scale_factor):
